@@ -2,10 +2,10 @@ node{
  
  def mavenHome = tool name: "maven-3.6.3"
  
- properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), pipelineTriggers([pollSCM('* * * * *')])])
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), pipelineTriggers([pollSCM('* * * * *')])])
+  
   stage('checkoutcode'){
   git branch: 'development', credentialsId: '95351010-6fe4-48a9-a722-5945446644e6', url: 'https://github.com/ravi3284-ec-apps/maven-web-application.git'
-  
    }
   
   stage('Buildartifact'){ 
