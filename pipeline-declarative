@@ -1,0 +1,55 @@
+pipeline{
+
+agent any
+
+triggers{
+pollSCM('* * * * * ')
+}
+
+options{
+    timestamps()
+buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5'))
+}
+
+tools{
+maven "maven-3.6.3"
+}
+
+   stages{
+   
+    stage('Checkoutcode') {
+	  steps{
+	     git branch: 'development', credentialsId: '95351010-6fe4-48a9-a722-5945446644e6', url: 'https://github.com/ravi3284-ec-apps/maven-web-application.git'
+	  
+	  }
+	}
+	
+	stage('Build') {
+	steps{
+	sh "mvn clean package"
+	}
+	}
+	
+	stage('sonarqubereport') {
+	steps{
+	sh "mvn clean sonar:sonar"
+	}
+	}
+	
+	stage('nexus') {
+	steps{
+	sh "mvn clean deploy"
+	}
+	}
+	
+	stage('deployingapptotomcat') {
+	steps{
+    sshagent(['a76bb49a-4034-4992-b932-f6fed5ddf66d']) {
+      sh "scp -o StrictHostkeychecking=no target/maven-web-application.war      ec2-user@18.224.15.178:/opt/apache-tomcat-9.0.46/webapps/"
+	}
+	}
+	}
+	
+   }
+
+}
